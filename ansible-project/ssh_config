@@ -1,0 +1,8 @@
+Host *
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+ 
+Host gitlab
+  HostName xxxxxxx.compute.amazonaws.com
+  User ec2-user
+  IdentityFile ~/.ssh/id_rsa

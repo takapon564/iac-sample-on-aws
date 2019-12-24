@@ -1,0 +1,59 @@
+- name: Install GitLab
+  hosts: gitlab
+  tasks:
+  - name: Upgrade all packages
+    yum:
+      name: '*'
+      state: latest
+
+  - name: Install a list of packages
+    yum:
+      name:
+        - curl
+        - golang
+        - policycoreutils
+        - openssh-server
+        - openssh-clients
+        - postfix
+        - vim
+        - wget
+        - "@Development tools"
+      state: latest
+
+  - name: systemctl enabled sshd & systemctl start sshd
+    systemd:
+      name: sshd
+      state: started
+      enabled: yes
+
+  - name: systemctl enabled postfix & systemctl start postfix
+    systemd:
+      name: postfix
+      state: started
+      enabled: yes
+
+
+  - name: Download gitlab-ce
+    get_url:
+      url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh
+      dest: /usr/local/src
+      mode: '0755'
+    become: yes
+    become_user: root
+
+  - name: Run script.rpm.sh
+    shell: ./script.rpm.sh
+    args:
+      chdir: /usr/local/src
+    become: yes
+    become_user: root
+
+  - name: Install gitlab-ce
+    yum:
+      name: gitlab-ce
+      state: latest
+
+  - name: gitlab-ctl reconfigure
+    shell: gitlab-ctl reconfigure
+    become: yes
+    become_user: root
